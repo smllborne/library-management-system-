@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role{
+    PATRON
+    LIBRARIAN
+
+}
+
+model Genre{
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  books Book[] //book points to Genre by id instead of embedding it 
+
+}
+
+model Book {
+  id      Int    @id  @default(autoincrement())
+  title   String  
+  author  String
+  isbn    String @unique
+  totalCopies  Int
+  genreld  Int
+  genre    Genre @relation(fields: [genreld], references: [id])
+
+}
+
+model User {
+  id      Int       @id @default(autoincrement())
+  email   String    @unique
+  password String
+  role    Role  @default(PATRON)
+  
+}
