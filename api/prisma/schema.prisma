@@ -30,9 +30,11 @@ model Book {
   title   String  
   author  String
   isbn    String @unique
+  description String @default("")
+  coverImage String?
   totalCopies  Int
-  genreld  Int
-  genre    Genre @relation(fields: [genreld], references: [id])
+  genreId Int @map("genreld")
+  genre    Genre @relation(fields: [genreId], references: [id])
 
 }
 

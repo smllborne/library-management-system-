@@ -1,0 +1,3 @@
+ALTER TABLE "Book"
+ADD COLUMN "description" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "coverImage" TEXT;

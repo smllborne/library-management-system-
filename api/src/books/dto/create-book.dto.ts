@@ -1,23 +1,11 @@
-import {IsString, IsNotEmpty, IsInt, Min, Length} from 'class-validator';
-
+import { IsString, IsInt, IsOptional, Min } from 'class-validator';
+ 
 export class CreateBookDto {
-  @IsString()
-  @IsNotEmpty()
-  title: string;
-
-  @IsString()
-  @IsNotEmpty()
-  author: string;
-
-  @IsString()
-  @Length(10, 17)
-  isbn: string;
-
-  @IsInt()
-  @Min(1)
-  totalCopies: number;
-
-  @IsInt()
-  genreld: number;
-
+  @IsString() title: string;
+  @IsString() author: string;
+  @IsString() isbn: string;
+  @IsString() description: string;
+  @IsOptional() @IsString() coverImage?: string;
+  @IsInt() @Min(1) totalCopies: number;
+  @IsInt() genreId: number;
 }

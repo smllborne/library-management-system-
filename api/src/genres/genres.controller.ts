@@ -2,10 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { GenresService } from './genres.service.js';
 import { CreateGenreDto } from './dto/create-genre.dto.js';
 import { UpdateGenreDto } from './dto/update-genre.dto.js';
-import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { RolesGuard } from '../auth/roles.guard.js';
-import { ROLES } from '../auth/roles.decorator.js';
+import { Roles } from '../auth/roles.decorator.js';
 
 @Controller('genres')
 export class GenresController {
@@ -13,7 +12,7 @@ export class GenresController {
   
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ROLES(Role.LIBRARIAN)
+  @Roles('LIBRARIAN')
   @Post()
   create(@Body() createGenreDto: CreateGenreDto) {
     return this.genresService.create(createGenreDto);

@@ -7,37 +7,38 @@ import { UpdateGenreDto } from './dto/update-genre.dto.js';
 @Injectable()
 export class GenresService {
   constructor(private prisma: PrismaService) {}
-
-  create(dto: CreateGenreDto){
-    return this.prisma.genre.create({data: dto});
-
-  }
-  
-  findAll(){
-    return this.prisma.genre.findMany({orderBy: {name: 'asc'}});
-
+ 
+  create(dto: CreateGenreDto) {
+    return this.prisma.genre.create({ data: dto });
   }
 
-  async findOne(id: number){
-    const genre = await this.prisma.genre.findUnique({where: {id}});
-    if(!genre) throw new NotFoundException(`Genre ${id} not found`);
+  findAll() {
+    return this.prisma.genre.findMany({ orderBy: { name: 'asc' } });
+  }
+
+  async findOne(id: number) {
+    const genre = await this.prisma.genre.findUnique({ where: { id } });
+    if (!genre) throw new NotFoundException(`Genre ${id} not found`);
     return genre;
   }
-    
-  async update(id: number, dto: UpdateGenreDto){
+
+  async update(id: number, dto: UpdateGenreDto) {
     await this.findOne(id);
-    return this.prisma.genre.update({where: {id}, data: dto});
+    return this.prisma.genre.update({ where: { id }, data: dto });
   }
 
-  async remove(id: number){
+  async remove(id: number) {
     await this.findOne(id);
     try {
-      return await this.prisma.genre.delete({where: {id}});
+      return await this.prisma.genre.delete({ where: { id } });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2003'
+      ) {
         throw new ConflictException('Cannot delete a genre that still has books.');
       }
       throw error;
     }
   }
-  }
+}

@@ -1,47 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, DefaultValuePipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { BooksService } from './books.service.js';
 import { CreateBookDto } from './dto/create-book.dto.js';
 import { UpdateBookDto } from './dto/update-book.dto.js';
-import { UseGuards } from '@nestjs/common';
-import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { RolesGuard } from '../auth/roles.guard.js';
-import { ROLES } from '../auth/roles.decorator.js';
-
+import { Roles } from '../auth/roles.decorator.js';
 
 @Controller('books')
 export class BooksController {
-  constructor(private books: BooksService) {}
-
+  constructor(private booksService: BooksService) {}
+ 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ROLES(Role.LIBRARIAN)
+  @Roles('LIBRARIAN')
   @Post()
   create(@Body() dto: CreateBookDto) {
-    return this.books.create(dto);
+    return this.booksService.create(dto);
   }
 
   @Get()
   findAll(
-    @Query ('genreld', new ParseIntPipe({optional: true})) genreld?:number,
-    @Query ('search') search?: string,
-    @Query ('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
-    @Query ('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
-){
-  return this.books.findAll(genreld, search, page, limit);
-}
-
+    @Query('genreId') genreId?: string,
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.booksService.findAll(genreId, search, Number(page) || 1, Number(limit) || 20);
+  }
+ 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: string) {
-    return this.books.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.books.update(+id, updateBookDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateBookDto) {
+    return this.booksService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string) {
-    return this.books.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.remove(id);
   }
 }
